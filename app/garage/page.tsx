@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { auth0 } from "@/lib/auth0";
-import { upsertAccountFromSession } from "@/lib/auth/session";
+import { getSession, upsertAccountFromSession } from "@/lib/auth/session";
 import { listBuildsForAccount } from "@/lib/db/builds";
 import { SiteHeader } from "@/components/site-header";
 import { Car, ExternalLink, Plus } from "lucide-react";
@@ -12,7 +11,7 @@ export const metadata = {
 };
 
 export default async function GaragePage() {
-  const session = await auth0.getSession();
+  const session = await getSession();
   if (!session?.user) {
     redirect("/auth/login?returnTo=/garage");
   }

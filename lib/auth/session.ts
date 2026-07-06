@@ -1,8 +1,14 @@
 import { auth0 } from "@/lib/auth0";
+import { isAuth0Configured } from "@/lib/auth/env";
 import { prisma } from "@/lib/prisma";
 
 export async function getSession() {
-  return auth0.getSession();
+  if (!isAuth0Configured()) return null;
+  try {
+    return await auth0.getSession();
+  } catch {
+    return null;
+  }
 }
 
 export async function requireSession() {
