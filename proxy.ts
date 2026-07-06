@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth0 } from "./lib/auth0";
+import { getAuth0 } from "./lib/auth0";
 import { isAuth0Configured } from "./lib/auth/env";
 
 export async function proxy(request: Request) {
@@ -17,6 +17,8 @@ export async function proxy(request: Request) {
     return NextResponse.next();
   }
 
+  const auth0 = getAuth0();
+  if (!auth0) return NextResponse.next();
   return await auth0.middleware(request);
 }
 

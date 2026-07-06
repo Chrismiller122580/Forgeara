@@ -1,9 +1,10 @@
-import { auth0 } from "@/lib/auth0";
+import { getAuth0 } from "@/lib/auth0";
 import { isAuth0Configured } from "@/lib/auth/env";
 import { prisma } from "@/lib/prisma";
 
 export async function getSession() {
-  if (!isAuth0Configured()) return null;
+  const auth0 = getAuth0();
+  if (!auth0) return null;
   try {
     return await auth0.getSession();
   } catch {
