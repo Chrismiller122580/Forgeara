@@ -67,7 +67,7 @@ export function CustomizerApp() {
           make: "Ford",
           model: "Mustang GT",
           year: 2024,
-          label: DEMO_VEHICLE.label,
+          label: "2024 Ford Mustang GT",
           bodyStyle: "Coupe",
           confidence: 0.97,
         }
@@ -84,6 +84,11 @@ export function CustomizerApp() {
     message?: string;
   } | null>(null);
   const [saving, setSaving] = useState(false);
+  const [forgeStatus, setForgeStatus] = useState(
+    demo
+      ? "📸 Your Mustang in Cape Coral driveway loaded • 3 mods pre-forged"
+      : "📸 Snap or upload your vehicle to start forging"
+  );
 
   useEffect(() => {
     fetch("/api/products")
@@ -126,9 +131,11 @@ export function CustomizerApp() {
   }, [demo, photoUrl]);
 
   const apply = useCallback((product: ForgeProduct) => {
-    setAppliedIds((prev) =>
-      prev.includes(product.id) ? prev : [...prev, product.id]
-    );
+    setAppliedIds((prev) => {
+      if (prev.includes(product.id)) return prev;
+      setForgeStatus(`🔥 Forged on your car: ${product.name} • 3D preview refreshed`);
+      return [...prev, product.id];
+    });
   }, []);
 
   const filteredProducts = useMemo(() => {
@@ -158,7 +165,10 @@ export function CustomizerApp() {
     if (!file) return;
     const url = URL.createObjectURL(file);
     setPhotoUrl(url);
+    setPreviewMode("photo");
+    setForgeStatus("📸 Photo uploaded • AI detecting your vehicle…");
     await runDetection(file, url);
+    setForgeStatus("📸 Photo uploaded + AI detected your vehicle • Ready to forge");
   };
 
   const redirectToLogin = () => {
@@ -344,7 +354,10 @@ export function CustomizerApp() {
           </aside>
 
           <section className="lg:col-span-6">
-            <div className="overflow-hidden rounded-3xl border border-zinc-700/80 bg-zinc-900 shadow-xl shadow-black/20">
+            <div className="overflow-hidden rounded-3xl border border-emerald-500/40 bg-zinc-900 shadow-xl shadow-emerald-500/10 ring-1 ring-emerald-500/20">
+              <div className="border-b border-emerald-500/20 bg-emerald-500/5 px-4 py-2.5 text-center text-sm text-emerald-200">
+                {forgeStatus}
+              </div>
               <div className="flex flex-wrap gap-1 border-b border-zinc-800 p-2">
                 {(["photo", "3d"] as const).map((mode) => (
                   <button
@@ -368,7 +381,7 @@ export function CustomizerApp() {
                   AR Camera
                 </button>
               </div>
-              <div className="h-[28rem] bg-zinc-950">
+              <div className="h-[34rem] bg-zinc-950 sm:h-[36rem]">
                 {previewMode === "photo" ? (
                   <PhotoPreview photoUrl={photoUrl} appliedMods={appliedMods} />
                 ) : (
@@ -380,7 +393,10 @@ export function CustomizerApp() {
             <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
               <button
                 type="button"
-                onClick={() => setAppliedIds([])}
+                onClick={() => {
+                  setAppliedIds([]);
+                  setForgeStatus("↩️ Build reset • Snap or upload to forge again");
+                }}
                 className="inline-flex items-center gap-2 rounded-xl border border-zinc-700 px-5 py-2.5 text-sm transition hover:bg-zinc-800"
               >
                 <RotateCcw className="h-4 w-4" />

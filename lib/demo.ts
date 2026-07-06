@@ -1,6 +1,6 @@
 export const DEMO_VEHICLE = {
   photoUrl: "/demo-vehicle.jpg",
-  label: "2024 Ford Mustang GT",
+  label: "2024 Ford Mustang GT • Cape Coral, FL",
 } as const;
 
 export const DEMO_APPLIED_MOD_IDS = ["wrap-red", "bronze-rims", "recaro"] as const;
