@@ -5,6 +5,8 @@ import { listBuildsForAccount } from "@/lib/db/builds";
 import { SiteHeader } from "@/components/site-header";
 import { Car, ExternalLink, Plus } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "My Garage — Forgeara",
   description: "Your saved vehicle builds",
