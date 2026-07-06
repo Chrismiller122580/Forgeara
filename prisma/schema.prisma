@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id        String      @id @default(cuid())
+  auth0Id   String      @unique
+  email     String      @unique
+  name      String?
+  picture   String?
+  vehicles  Vehicle[]
+  builds    UserBuild[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model Vehicle {
+  id        String      @id @default(cuid())
+  accountId String
+  account   Account     @relation(fields: [accountId], references: [id])
+  photoUrl  String
+  makeModel String
+  year      Int?
+  config    Json        @default("{}")
+  createdAt DateTime    @default(now())
+  builds    UserBuild[]
+}
+
+model ShopifyStore {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  domain      String
+  description String
+  specialty   String[]
+  rating      Float     @default(4.8)
+  featured    Boolean   @default(false)
+  products    Product[]
+}
+
+model Product {
+  id               String        @id @default(cuid())
+  name             String
+  category         String
+  type             String
+  price            Float
+  imageUrl         String?
+  preview3dUrl     String?
+  compatible       String[]
+  storeId          String?
+  store            ShopifyStore? @relation(fields: [storeId], references: [id])
+  shopifyVariantId String?
+  shopifyHandle    String?
+  tags             String[]
+}
+
+model UserBuild {
+  id          String   @id @default(cuid())
+  accountId   String
+  account     Account  @relation(fields: [accountId], references: [id])
+  vehicleId   String?
+  vehicle     Vehicle? @relation(fields: [vehicleId], references: [id])
+  name        String
+  vehicleData Json
+  photoUrl    String?
+  mods        Json
+  totalPrice  Float
+  sharedUrl   String   @unique
+  createdAt   DateTime @default(now())
+}
