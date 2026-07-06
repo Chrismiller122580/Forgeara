@@ -1,5 +1,9 @@
 import { Auth0Client } from "@auth0/nextjs-auth0/server";
-import { isAuth0Configured, normalizeAuth0Domain } from "@/lib/auth/env";
+import {
+  isAuth0Configured,
+  normalizeAppBaseUrl,
+  normalizeAuth0Domain,
+} from "@/lib/auth/env";
 
 let client: Auth0Client | null = null;
 
@@ -12,7 +16,7 @@ export function getAuth0() {
     try {
       client = new Auth0Client({
         domain,
-        appBaseUrl: process.env.APP_BASE_URL,
+        appBaseUrl: normalizeAppBaseUrl(process.env.APP_BASE_URL),
         signInReturnToPath: "/customize",
         authorizationParameters: {
           scope: "openid profile email",

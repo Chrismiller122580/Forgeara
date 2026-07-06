@@ -24,3 +24,10 @@ export function normalizeAuth0Domain(raw: string | undefined): string | undefine
 
   return trimmed.split("/")[0].split(":")[0] || undefined;
 }
+
+/** Canonical app origin — trims whitespace and trailing slashes from APP_BASE_URL. */
+export function normalizeAppBaseUrl(raw: string | undefined): string | undefined {
+  if (!raw) return undefined;
+  const trimmed = raw.trim().replace(/\/+$/, "");
+  return trimmed || undefined;
+}

@@ -18,7 +18,19 @@ export async function proxy(request: Request) {
   }
 
   const auth0 = getAuth0();
-  if (!auth0) return NextResponse.next();
+  if (!auth0) {
+    const { pathname } = new URL(request.url);
+    if (pathname.startsWith("/auth/")) {
+      return NextResponse.json(
+        {
+          error:
+            "Auth0 failed to initialize. Set AUTH0_DOMAIN to hostname only (e.g. your-tenant.us.auth0.com), verify AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, AUTH0_SECRET, and set APP_BASE_URL=https://www.forgeara.com, then redeploy.",
+        },
+        { status: 503 }
+      );
+    }
+    return NextResponse.next();
+  }
   return await auth0.middleware(request);
 }
 
